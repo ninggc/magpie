@@ -466,6 +466,9 @@ func Handler(w Windows, gw *gateway.Server) http.Handler {
 		in.RedactRules = cur.RedactRules // the masking rules, set on their own
 		// used or left is the Usage page's toggle as much as Settings', set on its own
 		in.QuotaLeft = cur.QuotaLeft
+		if in.QuotaDecimals == nil {
+			in.QuotaDecimals = cur.QuotaDecimals
+		}
 		// and the text size, which the keyboard changes too (text-size below)
 		in.TextSize = cur.TextSize
 		if v := strings.TrimSpace(in.Vision); v != "" && v != "off" && v != cur.Vision {
@@ -487,7 +490,7 @@ func Handler(w Windows, gw *gateway.Server) http.Handler {
 		if (in.Dock != cur.Dock || in.DockWindow != cur.DockWindow) && onDock != nil {
 			onDock(in)
 		}
-		if (in.TrayUsage != cur.TrayUsage || in.TrayUsageEvery != cur.TrayUsageEvery) && onTrayUsage != nil {
+		if (in.TrayUsage != cur.TrayUsage || in.TrayUsageEvery != cur.TrayUsageEvery || *in.QuotaDecimals != *cur.QuotaDecimals) && onTrayUsage != nil {
 			onTrayUsage()
 		}
 		writeJSON(rw, settingsState())

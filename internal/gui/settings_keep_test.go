@@ -25,12 +25,17 @@ func TestSettingsSaveKeepsModelChoices(t *testing.T) {
 		t.Fatal(err)
 	}
 	rec := httptest.NewRecorder()
-	Handler(nil, nil).ServeHTTP(rec, httptest.NewRequest("POST", "/api/settings", strings.NewReader(`{"theme":"dark","lang":"en"}`)))
+	Handler(nil, nil).ServeHTTP(rec, httptest.NewRequest("POST", "/api/settings", strings.NewReader(`{"theme":"dark","lang":"en","quotaDecimals":0}`)))
 	if rec.Code != http.StatusOK {
 		t.Fatalf("%d %s", rec.Code, rec.Body)
 	}
 	s := settings.Load()
-	if s.Theme != "dark" || s.ModelNames["p/m"] != "Mine" || len(s.ModelEfforts["p/m"]) != 1 || !s.ModelImages["p/m"] {
-		t.Fatalf("theme %q names %v efforts %v images %v", s.Theme, s.ModelNames, s.ModelEfforts, s.ModelImages)
+	if s.Theme != "dark" || *s.QuotaDecimals != 0 || s.ModelNames["p/m"] != "Mine" || len(s.ModelEfforts["p/m"]) != 1 || !s.ModelImages["p/m"] {
+		t.Fatalf("theme %q decimals %d names %v efforts %v images %v", s.Theme, *s.QuotaDecimals, s.ModelNames, s.ModelEfforts, s.ModelImages)
+	}
+	rec = httptest.NewRecorder()
+	Handler(nil, nil).ServeHTTP(rec, httptest.NewRequest("POST", "/api/settings", strings.NewReader(`{"theme":"light"}`)))
+	if rec.Code != http.StatusOK || *settings.Load().QuotaDecimals != 0 {
+		t.Fatalf("unmentioned decimals changed: %d %s", rec.Code, rec.Body)
 	}
 }

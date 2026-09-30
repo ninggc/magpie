@@ -57,7 +57,7 @@ func trayWindows(q provider.SubscriptionQuota) []provider.QuotaWindow {
 // trayUsageText is the menu bar's text for a card and the tooltip that
 // spells it out: each window's use, or what is left of it (left), and when
 // it starts again.
-func trayUsageText(q provider.SubscriptionQuota, now time.Time, left bool) (label, tip string) {
+func trayUsageText(q provider.SubscriptionQuota, now time.Time, left bool, decimals int) (label, tip string) {
 	if q.Error != "" {
 		return "", q.Name + ": " + q.Error
 	}
@@ -69,13 +69,14 @@ func trayUsageText(q provider.SubscriptionQuota, now time.Time, left bool) (labe
 		return q.Balance, q.Name + " · " + q.Balance
 	}
 	var short, long []string
+	scale := math.Pow10(decimals)
 	for _, w := range ws {
 		n := math.Max(0, math.Min(100, w.Used))
 		word := "used"
 		if left {
 			n, word = 100-n, "left"
 		}
-		pct := fmt.Sprintf("%.2f%%", n)
+		pct := fmt.Sprintf("%.*f%%", decimals, math.Round(n*scale)/scale)
 		short = append(short, pct)
 		line := w.Name + " " + pct + " " + word
 		if w.Display != "" {

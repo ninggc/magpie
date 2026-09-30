@@ -31,7 +31,8 @@ func (h *host) watchTrayUsage() {
 			ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 			label, tip := "", "magpie"
 			if q, ok := trayUsageCard(ctx); ok {
-				if label, tip = trayUsageText(q, time.Now(), settings.Load().QuotaLeft); tip == "" {
+				s := settings.Load()
+				if label, tip = trayUsageText(q, time.Now(), s.QuotaLeft, *s.QuotaDecimals); tip == "" {
 					tip = "magpie"
 				}
 			}

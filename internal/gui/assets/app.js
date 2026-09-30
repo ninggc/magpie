@@ -5228,10 +5228,11 @@ function accountQuota(data, user) {
 // every meter and the menu bar, kept in the settings (#122). The vendor's
 // own count, where it gives one, stands before the percentage.
 let quotaLeft = false;
-let quotaDecimals = 2;
+let quotaDecimals = 0;
 function quotaFill(w) {
   const used = Math.max(0, Math.min(100, w.used));
-  return quotaLeft ? 100 - used : used;
+  const shown = quotaDecimals === 0 ? Math.round(used) : used;
+  return quotaLeft ? 100 - shown : shown;
 }
 function quotaText(w) {
   const pct = t(quotaLeft ? "{n} left" : "{n} used", { n: quotaFill(w).toFixed(quotaDecimals) + "%" });
@@ -7864,9 +7865,9 @@ function applyPrefs(s, rate) {
   let kept = null;
   try { kept = localStorage.getItem("magpie.quotaLeft"); localStorage.removeItem("magpie.quotaLeft"); } catch {}
   if (kept === "1" && !s.quotaLeft) { s.quotaLeft = true; setQuotaLeft(true); }
-  if (quotaLeft !== !!s.quotaLeft || quotaDecimals !== (s.quotaDecimals ?? 2)) {
+  if (quotaLeft !== !!s.quotaLeft || quotaDecimals !== (s.quotaDecimals ?? 0)) {
     quotaLeft = !!s.quotaLeft;
-    quotaDecimals = s.quotaDecimals ?? 2;
+    quotaDecimals = s.quotaDecimals ?? 0;
     if (applyPrefs.painted) renderQuotas();
   }
   // the rate comes in /api/settings' answer (s.fx) or, from /api/state,
@@ -8317,7 +8318,7 @@ const trayCardID = (q) => q.user ? q.provider + "|" + q.user : q.provider;
 function renderTrayUsage(s, keep) {
   $("#quotaLeftSegs").replaceChildren(segs([[false, t("Used")], [true, t("Left")]], !!s.quotaLeft,
     (on) => { if (on !== quotaLeft) setQuotaLeft(on); }));
-  $("#quotaDecimalsSegs").replaceChildren(segs([0, 1, 2].map((n) => [n, String(n)]), s.quotaDecimals ?? 2,
+  $("#quotaDecimalsSegs").replaceChildren(segs([0, 1, 2].map((n) => [n, String(n)]), s.quotaDecimals ?? 0,
     (quotaDecimals) => savePrefs({ ...keep, quotaDecimals })));
   $("#currencySegs").replaceChildren(segs(CURRENCIES.map(([id, name]) => [id, t(name)]), s.currency || "usd", (v) => savePrefs({ ...keep, currency: v })));
   const rate = s.fx?.rate;
@@ -8758,7 +8759,7 @@ function prefsKeep(s) {
     sessionTerminal: s.sessionTerminal || "",
     redact: !!s.redact, redactPersonal: !!s.redactPersonal, redactWords: s.redactWords || [], codexWarmup: s.codexWarmup || "",
     claudeWarmup: s.claudeWarmup || "", codexWarmAt: s.codexWarmAt || "", claudeWarmAt: s.claudeWarmAt || "", workbuddyCheckin: !!s.workbuddyCheckin, noStats: !!s.noStats,
-    trayUsage: s.trayUsage || "", trayUsageEvery: s.trayUsageEvery || 3, quotaDecimals: s.quotaDecimals ?? 2,
+    trayUsage: s.trayUsage || "", trayUsageEvery: s.trayUsageEvery || 3, quotaDecimals: s.quotaDecimals ?? 0,
     vision: s.vision || "", imageGen: s.imageGen || "", currency: s.currency || "usd" };
 }
 

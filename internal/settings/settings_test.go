@@ -94,7 +94,7 @@ func TestRoundTrip(t *testing.T) {
 		t.Fatal("no time is off")
 	}
 	// the menu bar's usage: every 3 minutes unless told, left or used
-	if s := Load(); s.TrayUsageEvery != 3 || s.QuotaLeft || s.QuotaDecimals == nil || *s.QuotaDecimals != 2 {
+	if s := Load(); s.TrayUsageEvery != 3 || s.QuotaLeft || s.QuotaDecimals == nil || *s.QuotaDecimals != 0 {
 		t.Fatalf("tray defaults: %+v", s)
 	}
 	if Save(Settings{TrayUsageEvery: 10, QuotaLeft: true}) != nil || Load().TrayUsageEvery != 10 || !Load().QuotaLeft {

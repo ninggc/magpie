@@ -71,6 +71,9 @@ func TestTrayUsageText(t *testing.T) {
 	if label, _ = trayUsageText(q, now, false, 0); label != "43%" {
 		t.Errorf("whole percent rounds as before: %q", label)
 	}
+	if label, _ = trayUsageText(q, now, true, 0); label != "57%" {
+		t.Errorf("whole percent left rounds as before: %q", label)
+	}
 
 	// a balance, an error, nothing
 	if label, _ = trayUsageText(provider.SubscriptionQuota{Name: "DeepSeek", Balance: "¥12.30"}, now, false, 2); label != "¥12.30" {

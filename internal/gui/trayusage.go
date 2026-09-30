@@ -72,6 +72,9 @@ func trayUsageText(q provider.SubscriptionQuota, now time.Time, left bool, decim
 	scale := math.Pow10(decimals)
 	for _, w := range ws {
 		n := math.Max(0, math.Min(100, w.Used))
+		if decimals == 0 {
+			n = math.Round(n)
+		}
 		word := "used"
 		if left {
 			n, word = 100-n, "left"

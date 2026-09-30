@@ -103,7 +103,7 @@ type Settings struct {
 	// not used: the Usage page, the tray panel and the menu bar alike.
 	QuotaLeft bool `json:"quotaLeft,omitempty"`
 	// QuotaDecimals is how many decimal places subscription usage shows in
-	// those same places; nil means the default, two.
+	// those same places; nil means the default, zero.
 	QuotaDecimals *int `json:"quotaDecimals,omitempty"`
 	// TextSize is how large the window's and the tray panel's pages are
 	// drawn, in percent (one of TextSizes): the webviews' own zoom, as a
@@ -322,7 +322,7 @@ func (s Settings) normal() Settings {
 		s.TrayUsageEvery = 3
 	}
 	if s.QuotaDecimals == nil {
-		n := 2
+		n := 0
 		s.QuotaDecimals = &n
 	}
 	if s.TextSize == 0 {

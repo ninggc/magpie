@@ -6040,7 +6040,7 @@ function panelQuotaCard(q) {
   const rings = el("span", "pq-rings");
   for (const w of ws) {
     const used = Math.max(0, Math.min(100, w.used));
-    const r = el("span", "pq-ring" + (used >= 90 ? " full" : ""));
+    const r = el("span", "pq-ring" + (used >= 90 ? " full" : "") + (quotaDecimals ? " decimal" : ""));
     const dial = el("span", "pq-dial");
     dial.style.setProperty("--p", quotaFill(w));
     dial.append(el("b", "", quotaFill(w).toFixed(quotaDecimals) + "%"));

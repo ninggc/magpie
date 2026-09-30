@@ -5229,11 +5229,11 @@ function accountQuota(data, user) {
 // own count, where it gives one, stands before the percentage.
 let quotaLeft = false;
 function quotaFill(w) {
-  const used = Math.round(Math.max(0, Math.min(100, w.used)));
+  const used = Math.max(0, Math.min(100, w.used));
   return quotaLeft ? 100 - used : used;
 }
 function quotaText(w) {
-  const pct = t(quotaLeft ? "{n} left" : "{n} used", { n: quotaFill(w) + "%" });
+  const pct = t(quotaLeft ? "{n} left" : "{n} used", { n: quotaFill(w).toFixed(2) + "%" });
   return w.display ? w.display + " · " + pct : pct;
 }
 async function setQuotaLeft(on) {
@@ -6041,7 +6041,7 @@ function panelQuotaCard(q) {
     const r = el("span", "pq-ring" + (used >= 90 ? " full" : ""));
     const dial = el("span", "pq-dial");
     dial.style.setProperty("--p", quotaFill(w));
-    dial.append(el("b", "", quotaFill(w) + "%"));
+    dial.append(el("b", "", quotaFill(w).toFixed(2) + "%"));
     r.append(dial, el("span", "pq-rn", shortWindow(w.name)));
     r.title = t(w.name) + " · " + quotaText(w) + (w.resetsAt ? "\n" + t("Resets {when}", { when: new Date(w.resetsAt).toLocaleString() }) + " · " + untilText(new Date(w.resetsAt)) : "")
       + "\n" + t(quotaLeft ? "Show how much of each window is used" : "Show how much of each window is left");

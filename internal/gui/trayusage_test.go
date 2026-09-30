@@ -20,18 +20,18 @@ func TestTrayUsageText(t *testing.T) {
 		{Name: "Extra usage", Used: 5, Aside: true},
 	}}
 	label, tip := trayUsageText(q, now, false)
-	if label != "42% · 18%" {
+	if label != "42.20% · 17.60%" {
 		t.Errorf("label %q", label)
 	}
-	if want := "Claude\n5-hour 42% used · resets in 2h 10m\nWeekly 18% used · resets in 3d 4h"; tip != want {
+	if want := "Claude\n5-hour 42.20% used · resets in 2h 10m\nWeekly 17.60% used · resets in 3d 4h"; tip != want {
 		t.Errorf("tip %q, want %q", tip, want)
 	}
 	// or what is left of each, as Settings or the Usage page says (#122)
 	label, tip = trayUsageText(q, now, true)
-	if label != "58% · 82%" {
+	if label != "57.80% · 82.40%" {
 		t.Errorf("left label %q", label)
 	}
-	if want := "Claude\n5-hour 58% left · resets in 2h 10m\nWeekly 82% left · resets in 3d 4h"; tip != want {
+	if want := "Claude\n5-hour 57.80% left · resets in 2h 10m\nWeekly 82.40% left · resets in 3d 4h"; tip != want {
 		t.Errorf("left tip %q, want %q", tip, want)
 	}
 	if id := trayCardID(q); id != "claude|a@b.c" {
@@ -45,10 +45,10 @@ func TestTrayUsageText(t *testing.T) {
 		{Name: "Monthly", Used: 1},
 	}}
 	label, tip = trayUsageText(q, now, false)
-	if label != "100% · 0%" {
+	if label != "100.00% · 0.00%" {
 		t.Errorf("label %q", label)
 	}
-	if want := "ZCode\n5 小时 1.2k / 1k · 100% used\nWeekly 0% used · resets in 2m\nMonthly 1% used"; tip != want {
+	if want := "ZCode\n5 小时 1.2k / 1k · 100.00% used\nWeekly 0.00% used · resets in 2m\nMonthly 1.00% used"; tip != want {
 		t.Errorf("tip %q, want %q", tip, want)
 	}
 	if id := trayCardID(q); id != "zcode" {

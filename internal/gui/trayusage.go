@@ -57,7 +57,7 @@ func trayWindows(q provider.SubscriptionQuota) []provider.QuotaWindow {
 // trayUsageText is the menu bar's text for a card and the tooltip that
 // spells it out: each window's use, or what is left of it (left), and when
 // it starts again.
-func trayUsageText(q provider.SubscriptionQuota, now time.Time, left bool, decimals int) (label, tip string) {
+func trayUsageText(q provider.SubscriptionQuota, now time.Time, left bool) (label, tip string) {
 	if q.Error != "" {
 		return "", q.Name + ": " + q.Error
 	}
@@ -69,21 +69,23 @@ func trayUsageText(q provider.SubscriptionQuota, now time.Time, left bool, decim
 		return q.Balance, q.Name + " · " + q.Balance
 	}
 	var short, long []string
-	scale := math.Pow10(decimals)
 	for _, w := range ws {
-		n := math.Max(0, math.Min(100, w.Used))
-		if decimals == 0 {
-			n = math.Round(n)
-		}
+		used := math.Max(0, math.Min(100, w.Used))
+		n := int(math.Round(used))
 		word := "used"
 		if left {
+			used = 100 - used
 			n, word = 100-n, "left"
 		}
-		pct := fmt.Sprintf("%.*f%%", decimals, math.Round(n*scale)/scale)
+		pct := fmt.Sprintf("%d%%", n)
 		short = append(short, pct)
-		line := w.Name + " " + pct + " " + word
+		tipPct := pct
+		if used != math.Trunc(used) {
+			tipPct = fmt.Sprintf("%.1f%%", used)
+		}
+		line := w.Name + " " + tipPct + " " + word
 		if w.Display != "" {
-			line = w.Name + " " + w.Display + " · " + pct + " " + word
+			line = w.Name + " " + w.Display + " · " + tipPct + " " + word
 		}
 		if at := resetAt(w, now); !at.IsZero() && at.After(now) {
 			line += " · resets in " + until(at.Sub(now))

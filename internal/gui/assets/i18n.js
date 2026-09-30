@@ -143,8 +143,6 @@ const I18N = {
     "How often the usage beside the icon is asked for again": "图标旁的用量多久重新获取一次",
     "Usage shows": "用量显示",
     "How much of each window is used, or how much is left, on the Usage page, the panel and the menu bar": "每个窗口显示已用多少或剩余多少，用量页、面板和菜单栏一致",
-    "Usage decimals": "用量小数位",
-    "Decimal places for subscription usage on the Usage page, panel and menu bar": "订阅用量百分比的小数位数，用量页、面板和菜单栏一致",
     "Currency": "货币",
     "$ USD": "$ 美元",
     "¥ CNY": "¥ 人民币",

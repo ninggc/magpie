@@ -102,9 +102,6 @@ type Settings struct {
 	// QuotaLeft shows a subscription's windows by how much of each is left,
 	// not used: the Usage page, the tray panel and the menu bar alike.
 	QuotaLeft bool `json:"quotaLeft,omitempty"`
-	// QuotaDecimals is how many decimal places subscription usage shows in
-	// those same places; nil means the default, zero.
-	QuotaDecimals *int `json:"quotaDecimals,omitempty"`
 	// TextSize is how large the window's and the tray panel's pages are
 	// drawn, in percent (one of TextSizes): the webviews' own zoom, as a
 	// browser's, so the text and everything around it grow together.
@@ -265,9 +262,6 @@ func Save(s Settings) error {
 	if !slices.Contains(TrayEvery, s.TrayUsageEvery) {
 		return fmt.Errorf("the menu bar's usage is refreshed every %v minutes, not %d", TrayEvery, s.TrayUsageEvery)
 	}
-	if *s.QuotaDecimals < 0 || *s.QuotaDecimals > 2 {
-		return fmt.Errorf("subscription usage decimals must be 0, 1 or 2, not %d", *s.QuotaDecimals)
-	}
 	if !slices.Contains(TextSizes, s.TextSize) {
 		return fmt.Errorf("text size must be one of %v percent, not %d", TextSizes, s.TextSize)
 	}
@@ -320,10 +314,6 @@ func (s Settings) normal() Settings {
 	}
 	if s.TrayUsageEvery == 0 {
 		s.TrayUsageEvery = 3
-	}
-	if s.QuotaDecimals == nil {
-		n := 0
-		s.QuotaDecimals = &n
 	}
 	if s.TextSize == 0 {
 		s.TextSize = 100

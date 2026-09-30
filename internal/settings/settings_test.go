@@ -94,21 +94,11 @@ func TestRoundTrip(t *testing.T) {
 		t.Fatal("no time is off")
 	}
 	// the menu bar's usage: every 3 minutes unless told, left or used
-	if s := Load(); s.TrayUsageEvery != 3 || s.QuotaLeft || s.QuotaDecimals == nil || *s.QuotaDecimals != 0 {
+	if s := Load(); s.TrayUsageEvery != 3 || s.QuotaLeft {
 		t.Fatalf("tray defaults: %+v", s)
 	}
 	if Save(Settings{TrayUsageEvery: 10, QuotaLeft: true}) != nil || Load().TrayUsageEvery != 10 || !Load().QuotaLeft {
 		t.Fatal("tray refresh or left not kept")
-	}
-	for _, n := range []int{0, 1, 2} {
-		if err := Save(Settings{QuotaDecimals: &n}); err != nil || *Load().QuotaDecimals != n {
-			t.Fatalf("usage decimals %d not kept: %v", n, err)
-		}
-	}
-	for _, n := range []int{-1, 3} {
-		if Save(Settings{QuotaDecimals: &n}) == nil {
-			t.Fatalf("bad usage decimals %d accepted", n)
-		}
 	}
 	if Save(Settings{TrayUsageEvery: 7}) == nil {
 		t.Fatal("bad tray refresh accepted")
